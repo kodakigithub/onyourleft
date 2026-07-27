@@ -1,0 +1,130 @@
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Keyboard,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { autocompletePlaces, getPlaceLocation } from '../lib/places';
+
+/**
+ * Location search powered by the Places API (New) HTTP autocomplete.
+ * Selecting a result recenters the map via onSelectLocation({lat, lng}).
+ */
+export default function SearchBar({ onSelectLocation }) {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [open, setOpen] = useState(false);
+  const debounceRef = useRef(null);
+
+  // Debounced autocomplete lookup.
+  useEffect(() => {
+    clearTimeout(debounceRef.current);
+    if (query.trim().length < 3) {
+      setResults([]);
+      return;
+    }
+    debounceRef.current = setTimeout(async () => {
+      try {
+        setResults(await autocompletePlaces(query));
+      } catch {
+        setResults([]);
+      }
+    }, 300);
+    return () => clearTimeout(debounceRef.current);
+  }, [query]);
+
+  const handleSelect = async (item) => {
+    setOpen(false);
+    setQuery(item.primaryText);
+    Keyboard.dismiss();
+    try {
+      const location = await getPlaceLocation(item.placeId);
+      onSelectLocation(location);
+    } catch {
+      // Ignore — user can search again.
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Search for a place…"
+        placeholderTextColor="#9ca3af"
+        value={query}
+        onChangeText={(t) => {
+          setQuery(t);
+          setOpen(true);
+        }}
+        onFocus={() => setOpen(true)}
+        autoCorrect={false}
+        autoCapitalize="none"
+      />
+      {open && results.length > 0 && (
+        <View style={styles.results}>
+          {results.map((item) => (
+            <TouchableOpacity
+              key={item.placeId}
+              style={styles.resultRow}
+              onPress={() => handleSelect(item)}
+            >
+              <Text style={styles.resultPrimary} numberOfLines={1}>
+                {item.primaryText}
+              </Text>
+              {!!item.secondaryText && (
+                <Text style={styles.resultSecondary} numberOfLines={1}>
+                  {item.secondaryText}
+                </Text>
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    top: 48,
+    left: 12,
+    right: 12,
+    zIndex: 10,
+  },
+  input: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    fontSize: 15,
+    color: '#111827',
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 6,
+  },
+  results: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    marginTop: 6,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 6,
+  },
+  resultRow: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#e5e7eb',
+  },
+  resultPrimary: { fontSize: 14, fontWeight: '500', color: '#111827' },
+  resultSecondary: { fontSize: 12, color: '#6b7280', marginTop: 1 },
+});
