@@ -6,7 +6,7 @@ let googlePromise = null;
 
 /**
  * Loads the Google Maps JS API exactly once and returns `window.google`.
- * Loads the maps, routes (Directions) and places libraries up front.
+ * Loads the maps, routes (Routes API) and places libraries up front.
  */
 export function loadGoogleMaps() {
   if (!googlePromise) {

@@ -9,7 +9,7 @@ import { routeLengthMeters } from '../lib/distance';
  *   waypoints: [{lat, lng}]            — the points the user placed
  *   segments:  [[{lat, lng}], ...]     — segments[i] is the drawn path from waypoints[i] to waypoints[i+1]
  *
- * In 'snap' mode each segment is fetched from the Directions API (walking),
+ * In 'snap' mode each segment is fetched from the Routes API (walking),
  * falling back to a straight line if no road route exists. In 'freeform'
  * mode segments are straight lines.
  */

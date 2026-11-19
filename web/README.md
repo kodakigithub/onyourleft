@@ -12,7 +12,7 @@ separate and portable.
 - **Draw a route & see live distance**
   - Click the map to add waypoints, connected by a polyline
   - **Snap to roads** mode (default): segments follow roads/paths via the
-    Directions API (walking profile)
+    Routes API (walking profile)
   - **Free-form** mode: straight-line segments; switching modes recomputes
     the existing route
   - Live-updating total distance (miles + km) as points are added, removed,
@@ -43,7 +43,7 @@ Then open the URL Vite prints (usually http://localhost:5173).
    comfortably covers personal use).
 3. Under **APIs & Services → Library**, enable these three APIs:
    - **Maps JavaScript API**
-   - **Directions API**
+   - **Routes API**
    - **Places API (New)**
 4. Under **APIs & Services → Credentials**, create an API key.
 5. (Recommended) Restrict the key: HTTP referrer restriction for
@@ -83,7 +83,7 @@ src/
 │                              #   add/move/remove/undo/clear, snap vs free-form
 └── lib/
     ├── maps.js                # Loads the Google Maps JS API once
-    ├── directions.js          # Directions API (walking) → road-snapped path
+    ├── directions.js          # Routes API (walking) → road-snapped path
     ├── distance.js            # Haversine distance + formatting
     └── routeStorage.js        # Save/load interface (localStorage for now)
 ```
@@ -107,8 +107,10 @@ with API calls and no component code needs to change.
 
 ## Notes & limitations (MVP)
 
-- Road snapping uses the **walking** directions profile; each added/dragged
-  point in snap mode costs one Directions API request.
+- Road snapping uses the **walking** travel mode; each added/dragged point in
+  snap mode costs one Routes API request. Walking routes bill under Compute
+  Routes Essentials (10,000 free requests/month at current pricing; billing
+  must be enabled on the Google Cloud project).
 - If a point can't be snapped (e.g. dropped in water), that segment falls
   back to a straight line and a warning is shown.
 - No accounts, no backend, no GPS/pace tracking, no PWA — by design.
