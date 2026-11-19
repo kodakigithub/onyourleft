@@ -13,7 +13,7 @@ This repo is a monorepo with two independent apps:
 Both apps share the same route data model and feature set:
 
 - Draw routes by placing waypoints on a map, with live distance (mi + km)
-- Snap segments to roads (walking) via the Directions API, or draw free-form
+- Snap segments to roads (walking) via the Routes API, or draw free-form
 - Drag points to adjust, remove points, undo, clear
 - Search for a place to center the map (Places API)
 - Save / reload / delete named routes (local storage per platform, behind a

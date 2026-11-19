@@ -1,5 +1,5 @@
 /**
- * Google Maps API key for the web-service APIs (Directions, Places).
+ * Google Maps API key for the web-service APIs (Routes, Places).
  * Expo exposes EXPO_PUBLIC_* env vars at build time — copy .env.example
  * to .env and fill in your key (see app/README.md).
  */

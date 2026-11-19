@@ -21,12 +21,12 @@ on the same network as your computer.
 
 ## API key
 
-The app calls the **Directions API** and **Places API (New)** over HTTP.
+The app calls the **Routes API** and **Places API (New)** over HTTP.
 Get a key from the
 [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
 and enable:
 
-- **Directions API**
+- **Routes API**
 - **Places API (New)**
 
 > [!IMPORTANT]
@@ -74,7 +74,7 @@ src/
 │   └── useRouteBuilder.js   # Route state: waypoints + segments (same model as web)
 └── lib/
     ├── config.js            # API key (EXPO_PUBLIC_GOOGLE_MAPS_API_KEY)
-    ├── directions.js        # Directions HTTP API (walking) → snapped path
+    ├── directions.js        # Routes HTTP API (walking) → snapped path
     ├── places.js            # Places API (New) HTTP autocomplete + details
     ├── polyline.js          # Google encoded-polyline decoder
     ├── distance.js          # Haversine distance + formatting (same as web)
@@ -88,7 +88,10 @@ persistence goes through the `routeStorage` interface in
 
 ## Notes & limitations
 
-- Each added/dragged point in snap mode costs one Directions API request.
+- Each added/dragged point in snap mode costs one Routes API request.
+  Walking routes bill under Compute Routes Essentials (10,000 free requests per
+  month at current pricing; billing must be enabled on the Google Cloud
+  project).
 - If a point can't be snapped (e.g. dropped in water), that segment falls
   back to a straight line and a warning is shown.
 - Map tiles come from Apple Maps (iOS) / Google Maps (Android) in Expo Go,
