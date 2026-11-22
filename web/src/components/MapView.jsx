@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { loadGoogleMaps } from '../lib/maps';
+import { WARM_MAP_STYLE } from '../lib/mapStyle';
 
 const DEFAULT_CENTER = { lat: 40.7128, lng: -74.006 }; // New York City
 const LINE_COLOR = '#2563eb';
+const MAP_TYPES = [
+  { id: 'roadmap', label: 'Map' },
+  { id: 'hybrid', label: 'Satellite' },
+];
 
 /**
  * The interactive map. Renders waypoints as draggable markers and segments
@@ -25,6 +30,8 @@ export default function MapView({
   const callbacksRef = useRef({ onMapClick, onMoveWaypoint, onRemoveWaypoint });
   callbacksRef.current = { onMapClick, onMoveWaypoint, onRemoveWaypoint };
   const [error, setError] = useState(null);
+  const [mapType, setMapType] = useState('roadmap');
+  const mapTypeRef = useRef('roadmap');
 
   // Initialize the map once.
   useEffect(() => {
@@ -35,6 +42,8 @@ export default function MapView({
         const map = new google.maps.Map(containerRef.current, {
           center: DEFAULT_CENTER,
           zoom: 13,
+          mapTypeId: mapTypeRef.current,
+          styles: WARM_MAP_STYLE,
           mapTypeControl: false,
           streetViewControl: false,
           fullscreenControl: false,
@@ -102,9 +111,30 @@ export default function MapView({
     map.fitBounds(bounds);
   }, [focusRoute]);
 
+  const changeMapType = (nextMapType) => {
+    mapTypeRef.current = nextMapType;
+    setMapType(nextMapType);
+    mapRef.current?.setMapTypeId(nextMapType);
+  };
+
   return (
     <div className="relative h-full w-full">
       <div ref={containerRef} className="h-full w-full" />
+      <div className="absolute right-3 top-3 z-10 flex overflow-hidden rounded-lg border border-gray-300 bg-white shadow">
+        {MAP_TYPES.map(({ id, label }) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => changeMapType(id)}
+            aria-pressed={mapType === id}
+            className={`px-3 py-1.5 text-xs font-medium transition-colors ${
+              mapType === id ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
       {error && (
         <div className="absolute inset-0 flex items-center justify-center bg-white/90 p-8">
           <p className="max-w-md text-center text-sm text-red-600">{error}</p>
