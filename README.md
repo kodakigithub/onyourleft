@@ -14,6 +14,7 @@ Both apps share the same route data model and feature set:
 
 - Draw routes by placing waypoints on a map, with live distance (mi + km)
 - Snap segments to roads (walking) via the Routes API, or draw free-form
+- Warm outdoor map style with a Map / Satellite layer toggle
 - Drag points to adjust, remove points, undo, clear
 - Search for a place to center the map (Places API)
 - Save / reload / delete named routes (local storage per platform, behind a

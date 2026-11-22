@@ -20,6 +20,7 @@ export default function App() {
   const mapRef = useRef(null);
   const [savedRoutes, setSavedRoutes] = useState([]);
   const [sheetVisible, setSheetVisible] = useState(false);
+  const [mapType, setMapType] = useState('standard');
 
   useEffect(() => {
     routeStorage.list().then(setSavedRoutes);
@@ -65,14 +66,39 @@ export default function App() {
         ref={mapRef}
         waypoints={builder.waypoints}
         segments={builder.segments}
+        mapType={mapType}
         onMapPress={builder.addPoint}
         onMoveWaypoint={builder.moveWaypoint}
         onRemoveWaypoint={builder.removeWaypoint}
       />
       <SearchBar onSelectLocation={recenterOn} />
-      <TouchableOpacity style={styles.routesButton} onPress={() => setSheetVisible(true)}>
-        <Text style={styles.routesButtonText}>Routes</Text>
-      </TouchableOpacity>
+      <View style={styles.topRightControls}>
+        <TouchableOpacity style={styles.routesButton} onPress={() => setSheetVisible(true)}>
+          <Text style={styles.routesButtonText}>Routes</Text>
+        </TouchableOpacity>
+        <View style={styles.layerToggle}>
+          <TouchableOpacity
+            style={[styles.layerButton, mapType === 'standard' && styles.layerButtonActive]}
+            onPress={() => setMapType('standard')}
+            accessibilityRole="button"
+            accessibilityState={{ selected: mapType === 'standard' }}
+          >
+            <Text style={[styles.layerText, mapType === 'standard' && styles.layerTextActive]}>
+              Map
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.layerButton, mapType === 'hybrid' && styles.layerButtonActive]}
+            onPress={() => setMapType('hybrid')}
+            accessibilityRole="button"
+            accessibilityState={{ selected: mapType === 'hybrid' }}
+          >
+            <Text style={[styles.layerText, mapType === 'hybrid' && styles.layerTextActive]}>
+              Satellite
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <RouteControls builder={builder} />
       </KeyboardAvoidingView>
@@ -91,10 +117,15 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
-  routesButton: {
+  topRightControls: {
     position: 'absolute',
     top: 104,
     right: 12,
+    alignItems: 'flex-end',
+    gap: 8,
+    zIndex: 10,
+  },
+  routesButton: {
     backgroundColor: 'white',
     borderRadius: 10,
     paddingHorizontal: 14,
@@ -104,7 +135,21 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
     elevation: 6,
-    zIndex: 10,
   },
   routesButtonText: { fontSize: 14, fontWeight: '600', color: '#2563eb' },
+  layerToggle: {
+    flexDirection: 'row',
+    overflow: 'hidden',
+    borderRadius: 10,
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 6,
+  },
+  layerButton: { paddingHorizontal: 12, paddingVertical: 8 },
+  layerButtonActive: { backgroundColor: '#2563eb' },
+  layerText: { fontSize: 12, fontWeight: '600', color: '#374151' },
+  layerTextActive: { color: 'white' },
 });

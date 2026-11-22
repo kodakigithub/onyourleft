@@ -56,6 +56,8 @@ on iOS — see the
   recomputes the existing route.
 - **Drag** a marker to adjust it; **tap a marker's callout** to remove it.
 - **Undo point** / **Clear route** buttons; live distance in miles + km.
+- **Map / Satellite** toggle (top right) switches between the warm outdoor
+  map and satellite imagery.
 - **Search bar** (top) finds a place and centers the map on it.
 - **Routes button** opens the routes sheet: name and save the current
   route, tap a saved route to reload it on the map, or delete it.
@@ -74,6 +76,7 @@ src/
 │   └── useRouteBuilder.js   # Route state: waypoints + segments (same model as web)
 └── lib/
     ├── config.js            # API key (EXPO_PUBLIC_GOOGLE_MAPS_API_KEY)
+    ├── mapStyle.js          # Warm outdoor palette (Android Google Maps)
     ├── directions.js        # Routes HTTP API (walking) → snapped path
     ├── places.js            # Places API (New) HTTP autocomplete + details
     ├── polyline.js          # Google encoded-polyline decoder
@@ -97,4 +100,7 @@ persistence goes through the `routeStorage` interface in
 - Map tiles come from Apple Maps (iOS) / Google Maps (Android) in Expo Go,
   but route snapping, search, and distance all use Google's APIs identically
   on both platforms.
+- The warm palette is applied through Google Maps custom styling on Android.
+  Expo Go on iOS uses Apple Maps, which ignores that style, so it shows a
+  muted standard map instead. Satellite works on both platforms.
 - No accounts, no backend, no GPS/pace tracking — by design (see roadmap).

@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
+import { WARM_MAP_STYLE } from '../lib/mapStyle';
 
 const DEFAULT_REGION = {
   latitude: 40.7128,
@@ -17,14 +18,20 @@ const LINE_COLOR = '#2563eb';
  * lives in useRouteBuilder and flows in via props / out via callbacks.
  */
 const RouteMap = forwardRef(function RouteMap(
-  { waypoints, segments, onMapPress, onMoveWaypoint, onRemoveWaypoint },
+  { waypoints, segments, mapType = 'standard', onMapPress, onMoveWaypoint, onRemoveWaypoint },
   ref,
 ) {
+  const resolvedMapType =
+    Platform.OS === 'ios' && mapType === 'standard' ? 'mutedStandard' : mapType;
+
   return (
     <MapView
       ref={ref}
       style={styles.map}
       initialRegion={DEFAULT_REGION}
+      mapType={resolvedMapType}
+      customMapStyle={Platform.OS === 'android' ? WARM_MAP_STYLE : undefined}
+      userInterfaceStyle="light"
       onPress={(e) => {
         const { latitude, longitude } = e.nativeEvent.coordinate;
         onMapPress({ lat: latitude, lng: longitude });
