@@ -1,8 +1,40 @@
 @import 'tailwindcss';
 
+@theme {
+  --color-night: #0f1419;
+  --color-surface: #1a212b;
+  --color-elevated: #222c38;
+  --color-primary: #3ddc97;
+  --color-route: #c6ff3d;
+  --color-accent: #ff4d6d;
+  --color-ink: #e6eaf0;
+  --color-muted: #93a0b3;
+  --color-line: #2a3542;
+}
+
+html {
+  color-scheme: dark;
+  background-color: var(--color-night);
+}
+
 html,
 body,
 #root {
   height: 100%;
   margin: 0;
+}
+
+body {
+  background-color: var(--color-night);
+  color: var(--color-ink);
+}
+
+::selection {
+  background-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
+  color: var(--color-ink);
+}
+
+* {
+  scrollbar-color: var(--color-line) var(--color-night);
+  scrollbar-width: thin;
 }

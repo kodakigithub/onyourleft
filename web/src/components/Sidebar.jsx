@@ -31,43 +31,47 @@ export default function Sidebar({
   };
 
   return (
-    <aside className="flex h-full w-80 flex-col overflow-y-auto border-r border-gray-200 bg-white">
-      <div className="border-b border-gray-200 p-4">
-        <h1 className="text-lg font-bold text-gray-900">On Your Left</h1>
-        <p className="text-xs text-gray-500">Running route planner</p>
+    <aside className="flex h-full w-80 flex-col overflow-y-auto border-r border-line bg-surface">
+      <div className="border-b border-line p-4">
+        <h1 className="text-lg font-bold text-ink">On Your Left</h1>
+        <p className="text-xs text-muted">Running route planner</p>
       </div>
 
       <div className="space-y-4 p-4">
         <SearchBar map={map} />
 
         {/* Live distance */}
-        <div className="rounded-lg bg-blue-50 p-3">
-          <div className="text-2xl font-bold text-blue-900">{formatMiles(distanceMeters)}</div>
-          <div className="text-xs text-blue-700">
+        <div className="rounded-lg border border-line bg-night p-3">
+          <div className="text-2xl font-bold text-primary">{formatMiles(distanceMeters)}</div>
+          <div className="text-xs text-muted">
             {formatKm(distanceMeters)} · {waypoints.length}{' '}
             {waypoints.length === 1 ? 'point' : 'points'}
             {busy && ' · snapping to roads…'}
           </div>
         </div>
 
-        {warning && <p className="text-xs text-amber-600">{warning}</p>}
+        {warning && <p className="text-xs text-accent">{warning}</p>}
 
         {/* Drawing mode */}
         <div>
-          <span className="mb-1 block text-xs font-medium text-gray-500">Drawing mode</span>
-          <div className="flex overflow-hidden rounded-lg border border-gray-300">
+          <span className="mb-1 block text-xs font-medium text-muted">Drawing mode</span>
+          <div className="flex overflow-hidden rounded-lg border border-line bg-night">
             <button
               onClick={() => setMode('snap')}
-              className={`flex-1 px-3 py-1.5 text-sm ${
-                mode === 'snap' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
+              className={`flex-1 px-3 py-1.5 text-sm transition-colors ${
+                mode === 'snap'
+                  ? 'bg-primary font-medium text-night'
+                  : 'text-muted hover:bg-elevated hover:text-ink'
               }`}
             >
               Snap to roads
             </button>
             <button
               onClick={() => setMode('freeform')}
-              className={`flex-1 px-3 py-1.5 text-sm ${
-                mode === 'freeform' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
+              className={`flex-1 px-3 py-1.5 text-sm transition-colors ${
+                mode === 'freeform'
+                  ? 'bg-primary font-medium text-night'
+                  : 'text-muted hover:bg-elevated hover:text-ink'
               }`}
             >
               Free-form
@@ -80,14 +84,14 @@ export default function Sidebar({
           <button
             onClick={undo}
             disabled={waypoints.length === 0 || busy}
-            className="flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-40"
+            className="flex-1 rounded-lg border border-line px-3 py-1.5 text-sm text-ink transition-colors hover:border-primary/50 hover:bg-elevated disabled:opacity-40"
           >
             Undo point
           </button>
           <button
             onClick={clear}
             disabled={waypoints.length === 0 || busy}
-            className="flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-40"
+            className="flex-1 rounded-lg border border-line px-3 py-1.5 text-sm text-ink transition-colors hover:border-primary/50 hover:bg-elevated disabled:opacity-40"
           >
             Clear route
           </button>
@@ -100,21 +104,21 @@ export default function Sidebar({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Route name"
-            className="min-w-0 flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+            className="min-w-0 flex-1 rounded-lg border border-line bg-night px-3 py-1.5 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
           />
           <button
             type="submit"
             disabled={!canSave || !name.trim()}
-            className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-40"
+            className="rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-night transition-colors hover:bg-primary/90 disabled:opacity-40"
           >
             Save
           </button>
         </form>
-        {justSaved && <p className="text-xs text-green-600">Route saved.</p>}
+        {justSaved && <p className="text-xs text-primary">Route saved.</p>}
       </div>
 
-      <div className="mt-auto border-t border-gray-200 p-4">
-        <h2 className="mb-2 text-sm font-semibold text-gray-700">Saved routes</h2>
+      <div className="mt-auto border-t border-line p-4">
+        <h2 className="mb-2 text-sm font-semibold text-ink">Saved routes</h2>
         <SavedRouteList routes={savedRoutes} onLoad={onLoadRoute} onDelete={onDeleteRoute} />
       </div>
     </aside>

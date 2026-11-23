@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { COLORS } from '../lib/theme';
 
 /**
  * Location search powered by the Places API (PlaceAutocompleteElement).
@@ -13,6 +14,11 @@ export default function SearchBar({ map }) {
     }
     const el = new window.google.maps.places.PlaceAutocompleteElement();
     el.style.width = '100%';
+    el.style.colorScheme = 'dark';
+    el.style.backgroundColor = COLORS.surface;
+    el.style.color = COLORS.ink;
+    el.style.border = `1px solid ${COLORS.line}`;
+    el.style.borderRadius = '10px';
     const host = hostRef.current;
     host.replaceChildren(el);
 

@@ -21,7 +21,7 @@ separate and portable.
     point, or clear the whole route
 - **Search & save routes**
   - Places search bar to find and center on any location/address
-  - Warm outdoor map style with a **Map / Satellite** layer toggle
+  - Night Run dark map style with a **Map / Satellite** layer toggle
   - Save routes (name, waypoints, full drawn path, distance, date) to
     browser `localStorage`
   - Saved-routes sidebar: click to reload a route on the map, or delete it
@@ -84,7 +84,8 @@ src/
 │                              #   add/move/remove/undo/clear, snap vs free-form
 └── lib/
     ├── maps.js                # Loads the Google Maps JS API once
-    ├── mapStyle.js            # Warm outdoor map palette
+    ├── mapStyle.js            # Night Run dark map palette
+    ├── theme.js               # Shared Night Run colors for JS-rendered UI
     ├── directions.js          # Routes API (walking) → road-snapped path
     ├── distance.js            # Haversine distance + formatting
     └── routeStorage.js        # Save/load interface (localStorage for now)
