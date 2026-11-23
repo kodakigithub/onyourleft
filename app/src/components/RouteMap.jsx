@@ -1,7 +1,8 @@
 import React, { forwardRef } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
-import { WARM_MAP_STYLE } from '../lib/mapStyle';
+import { NIGHT_MAP_STYLE } from '../lib/mapStyle';
+import { COLORS } from '../lib/theme';
 
 const DEFAULT_REGION = {
   latitude: 40.7128,
@@ -9,8 +10,6 @@ const DEFAULT_REGION = {
   latitudeDelta: 0.05,
   longitudeDelta: 0.05,
 };
-
-const LINE_COLOR = '#2563eb';
 
 /**
  * The interactive map. Tap to add waypoints, drag markers to adjust,
@@ -21,35 +20,49 @@ const RouteMap = forwardRef(function RouteMap(
   { waypoints, segments, mapType = 'standard', onMapPress, onMoveWaypoint, onRemoveWaypoint },
   ref,
 ) {
-  const resolvedMapType =
-    Platform.OS === 'ios' && mapType === 'standard' ? 'mutedStandard' : mapType;
-
   return (
     <MapView
       ref={ref}
       style={styles.map}
       initialRegion={DEFAULT_REGION}
-      mapType={resolvedMapType}
-      customMapStyle={Platform.OS === 'android' ? WARM_MAP_STYLE : undefined}
-      userInterfaceStyle="light"
+      mapType={mapType}
+      customMapStyle={Platform.OS === 'android' ? NIGHT_MAP_STYLE : undefined}
+      userInterfaceStyle="dark"
+      loadingEnabled
+      loadingBackgroundColor={COLORS.night}
+      loadingIndicatorColor={COLORS.primary}
       onPress={(e) => {
         const { latitude, longitude } = e.nativeEvent.coordinate;
         onMapPress({ lat: latitude, lng: longitude });
       }}
     >
-      {segments.map((path, i) => (
-        <Polyline
-          key={`seg-${i}`}
-          coordinates={path.map((p) => ({ latitude: p.lat, longitude: p.lng }))}
-          strokeColor={LINE_COLOR}
-          strokeWidth={4}
-        />
-      ))}
+      {segments.map((path, i) => {
+        const coordinates = path.map((p) => ({ latitude: p.lat, longitude: p.lng }));
+        return (
+          <React.Fragment key={`seg-${i}`}>
+            <Polyline
+              coordinates={coordinates}
+              strokeColor="rgba(198, 255, 61, 0.22)"
+              strokeWidth={12}
+              lineCap="round"
+              lineJoin="round"
+            />
+            <Polyline
+              coordinates={coordinates}
+              strokeColor={COLORS.route}
+              strokeWidth={4}
+              lineCap="round"
+              lineJoin="round"
+            />
+          </React.Fragment>
+        );
+      })}
       {waypoints.map((pt, i) => (
         <Marker
           key={`wp-${i}`}
           coordinate={{ latitude: pt.lat, longitude: pt.lng }}
           draggable
+          pinColor={COLORS.primary}
           title={`Point ${i + 1}`}
           description="Drag to adjust · tap to remove"
           onDragEnd={(e) => {
@@ -64,7 +77,7 @@ const RouteMap = forwardRef(function RouteMap(
 });
 
 const styles = StyleSheet.create({
-  map: { flex: 1 },
+  map: { flex: 1, backgroundColor: COLORS.night },
 });
 
 export default RouteMap;

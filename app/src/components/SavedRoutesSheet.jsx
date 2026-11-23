@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { formatMiles, formatKm } from '../lib/distance';
+import { COLORS } from '../lib/theme';
 
 /**
  * Modal for saving the current route and browsing saved ones.
@@ -50,9 +51,10 @@ export default function SavedRoutesSheet({
           <TextInput
             style={styles.nameInput}
             placeholder="Name this route"
-            placeholderTextColor="#9ca3af"
+            placeholderTextColor={COLORS.muted}
             value={name}
             onChangeText={setName}
+            keyboardAppearance="dark"
           />
           <TouchableOpacity
             style={[styles.saveButton, !canSave && styles.disabled]}
@@ -105,7 +107,7 @@ export default function SavedRoutesSheet({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb', paddingTop: 56 },
+  container: { flex: 1, backgroundColor: COLORS.night, paddingTop: 56 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -113,50 +115,50 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: 12,
   },
-  title: { fontSize: 20, fontWeight: '700', color: '#111827' },
-  close: { fontSize: 15, color: '#2563eb', fontWeight: '600' },
+  title: { fontSize: 20, fontWeight: '700', color: COLORS.ink },
+  close: { fontSize: 15, color: COLORS.primary, fontWeight: '600' },
   saveRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16 },
   nameInput: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: COLORS.line,
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 8,
     fontSize: 14,
-    color: '#111827',
+    color: COLORS.ink,
   },
   saveButton: {
-    backgroundColor: '#2563eb',
+    backgroundColor: COLORS.primary,
     borderRadius: 10,
     paddingHorizontal: 16,
     justifyContent: 'center',
   },
-  saveButtonText: { color: 'white', fontWeight: '600', fontSize: 14 },
+  saveButtonText: { color: COLORS.night, fontWeight: '700', fontSize: 14 },
   disabled: { opacity: 0.4 },
-  savedNote: { fontSize: 12, color: '#059669', paddingHorizontal: 16, marginTop: 4 },
-  hint: { fontSize: 12, color: '#9ca3af', paddingHorizontal: 16, marginTop: 4 },
+  savedNote: { fontSize: 12, color: COLORS.primary, paddingHorizontal: 16, marginTop: 4 },
+  hint: { fontSize: 12, color: COLORS.muted, paddingHorizontal: 16, marginTop: 4 },
   list: { flex: 1, marginTop: 12, paddingHorizontal: 16 },
-  empty: { fontSize: 14, color: '#9ca3af', marginTop: 8 },
+  empty: { fontSize: 14, color: COLORS.muted, marginTop: 8 },
   routeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: COLORS.line,
     borderRadius: 10,
     padding: 12,
     marginBottom: 8,
   },
   routeInfo: { flex: 1, marginRight: 8 },
-  routeName: { fontSize: 14, fontWeight: '500', color: '#111827' },
-  routeMeta: { fontSize: 12, color: '#6b7280', marginTop: 2 },
+  routeName: { fontSize: 14, fontWeight: '500', color: COLORS.ink },
+  routeMeta: { fontSize: 12, color: COLORS.muted, marginTop: 2 },
   deleteButton: {
-    backgroundColor: '#fef2f2',
+    backgroundColor: 'rgba(255, 77, 109, 0.12)',
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 6,
   },
-  deleteText: { fontSize: 12, color: '#dc2626', fontWeight: '600' },
+  deleteText: { fontSize: 12, color: COLORS.accent, fontWeight: '600' },
 });

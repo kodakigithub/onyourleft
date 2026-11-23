@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { autocompletePlaces, getPlaceLocation } from '../lib/places';
+import { COLORS } from '../lib/theme';
 
 /**
  * Location search powered by the Places API (New) HTTP autocomplete.
@@ -53,7 +54,7 @@ export default function SearchBar({ onSelectLocation }) {
       <TextInput
         style={styles.input}
         placeholder="Search for a place…"
-        placeholderTextColor="#9ca3af"
+        placeholderTextColor={COLORS.muted}
         value={query}
         onChangeText={(t) => {
           setQuery(t);
@@ -62,6 +63,7 @@ export default function SearchBar({ onSelectLocation }) {
         onFocus={() => setOpen(true)}
         autoCorrect={false}
         autoCapitalize="none"
+        keyboardAppearance="dark"
       />
       {open && results.length > 0 && (
         <View style={styles.results}>
@@ -96,25 +98,29 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   input: {
-    backgroundColor: 'white',
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.line,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 10,
     fontSize: 15,
-    color: '#111827',
+    color: COLORS.ink,
     shadowColor: '#000',
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.4,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
     elevation: 6,
   },
   results: {
-    backgroundColor: 'white',
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.line,
     borderRadius: 10,
     marginTop: 6,
     overflow: 'hidden',
     shadowColor: '#000',
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.4,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
     elevation: 6,
@@ -123,8 +129,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: COLORS.line,
   },
-  resultPrimary: { fontSize: 14, fontWeight: '500', color: '#111827' },
-  resultSecondary: { fontSize: 12, color: '#6b7280', marginTop: 1 },
+  resultPrimary: { fontSize: 14, fontWeight: '500', color: COLORS.ink },
+  resultSecondary: { fontSize: 12, color: COLORS.muted, marginTop: 1 },
 });

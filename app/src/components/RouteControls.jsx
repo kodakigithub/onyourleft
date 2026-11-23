@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { formatMiles, formatKm } from '../lib/distance';
+import { COLORS } from '../lib/theme';
 
 /**
  * Bottom control card: live distance, drawing mode toggle, undo/clear.
@@ -67,42 +68,46 @@ export default function RouteControls({ builder }) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: 'white',
+    backgroundColor: COLORS.surface,
+    borderTopWidth: 1,
+    borderColor: COLORS.line,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     padding: 16,
     shadowColor: '#000',
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.4,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: -2 },
     elevation: 8,
   },
   distanceRow: { alignItems: 'center', marginBottom: 8 },
-  distance: { fontSize: 28, fontWeight: '700', color: '#1e3a8a' },
-  subtext: { fontSize: 12, color: '#3b82f6', marginTop: 2 },
-  warning: { fontSize: 12, color: '#d97706', textAlign: 'center', marginBottom: 6 },
+  distance: { fontSize: 28, fontWeight: '700', color: COLORS.primary },
+  subtext: { fontSize: 12, color: COLORS.muted, marginTop: 2 },
+  warning: { fontSize: 12, color: COLORS.accent, textAlign: 'center', marginBottom: 6 },
   modeRow: {
     flexDirection: 'row',
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: COLORS.line,
+    backgroundColor: COLORS.night,
     borderRadius: 10,
     overflow: 'hidden',
     marginBottom: 10,
   },
-  modeButton: { flex: 1, paddingVertical: 8, alignItems: 'center', backgroundColor: 'white' },
-  modeButtonActive: { backgroundColor: '#2563eb' },
-  modeText: { fontSize: 14, color: '#374151' },
-  modeTextActive: { color: 'white', fontWeight: '600' },
+  modeButton: { flex: 1, paddingVertical: 8, alignItems: 'center', backgroundColor: COLORS.night },
+  modeButtonActive: { backgroundColor: COLORS.primary },
+  modeText: { fontSize: 14, color: COLORS.muted },
+  modeTextActive: { color: COLORS.night, fontWeight: '600' },
   actionsRow: { flexDirection: 'row', gap: 8 },
   actionButton: {
     flex: 1,
+    backgroundColor: COLORS.night,
     paddingVertical: 8,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: COLORS.line,
     borderRadius: 10,
   },
-  actionText: { fontSize: 14, color: '#374151' },
+  actionText: { fontSize: 14, color: COLORS.ink },
   disabled: { opacity: 0.4 },
-  hint: { fontSize: 11, color: '#9ca3af', textAlign: 'center', marginTop: 10 },
+  hint: { fontSize: 11, color: COLORS.muted, textAlign: 'center', marginTop: 10 },
 });

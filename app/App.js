@@ -14,6 +14,7 @@ import SearchBar from './src/components/SearchBar';
 import SavedRoutesSheet from './src/components/SavedRoutesSheet';
 import { useRouteBuilder } from './src/hooks/useRouteBuilder';
 import { routeStorage } from './src/lib/routeStorage';
+import { COLORS } from './src/lib/theme';
 
 export default function App() {
   const builder = useRouteBuilder();
@@ -61,7 +62,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
       <RouteMap
         ref={mapRef}
         waypoints={builder.waypoints}
@@ -116,7 +117,7 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: COLORS.night },
   topRightControls: {
     position: 'absolute',
     top: 104,
@@ -126,30 +127,34 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   routesButton: {
-    backgroundColor: 'white',
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.line,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 8,
     shadowColor: '#000',
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.4,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
     elevation: 6,
   },
-  routesButtonText: { fontSize: 14, fontWeight: '600', color: '#2563eb' },
+  routesButtonText: { fontSize: 14, fontWeight: '600', color: COLORS.primary },
   layerToggle: {
     flexDirection: 'row',
     overflow: 'hidden',
     borderRadius: 10,
-    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: COLORS.line,
+    backgroundColor: COLORS.surface,
     shadowColor: '#000',
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.4,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
     elevation: 6,
   },
   layerButton: { paddingHorizontal: 12, paddingVertical: 8 },
-  layerButtonActive: { backgroundColor: '#2563eb' },
-  layerText: { fontSize: 12, fontWeight: '600', color: '#374151' },
-  layerTextActive: { color: 'white' },
+  layerButtonActive: { backgroundColor: COLORS.primary },
+  layerText: { fontSize: 12, fontWeight: '600', color: COLORS.muted },
+  layerTextActive: { color: COLORS.night },
 });
