@@ -6,7 +6,7 @@ import { COLORS } from '../lib/theme';
 /**
  * Bottom control card: live distance, drawing mode toggle, undo/clear.
  */
-export default function RouteControls({ builder }) {
+export default function RouteControls({ builder, apiKeyMissing, onOpenApiKey }) {
   const { mode, setMode, waypoints, distanceMeters, busy, warning, undo, clear } = builder;
   const hasPoints = waypoints.length > 0;
 
@@ -20,6 +20,14 @@ export default function RouteControls({ builder }) {
           {busy ? ' · snapping…' : ''}
         </Text>
       </View>
+
+      {apiKeyMissing && !warning && (
+        <TouchableOpacity style={styles.keyNotice} onPress={onOpenApiKey}>
+          <Text style={styles.keyNoticeText}>
+            Add a Google API key for road snapping and place search.
+          </Text>
+        </TouchableOpacity>
+      )}
 
       {warning && <Text style={styles.warning}>{warning}</Text>}
 
@@ -83,6 +91,16 @@ const styles = StyleSheet.create({
   distanceRow: { alignItems: 'center', marginBottom: 8 },
   distance: { fontSize: 28, fontWeight: '700', color: COLORS.primary },
   subtext: { fontSize: 12, color: COLORS.muted, marginTop: 2 },
+  keyNotice: {
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: COLORS.accent,
+    borderRadius: 8,
+    backgroundColor: COLORS.night,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  keyNoticeText: { fontSize: 11, color: COLORS.accent, textAlign: 'center' },
   warning: { fontSize: 12, color: COLORS.accent, textAlign: 'center', marginBottom: 6 },
   modeRow: {
     flexDirection: 'row',

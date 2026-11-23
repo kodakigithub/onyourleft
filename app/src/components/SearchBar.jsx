@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { isApiKeyError } from '../lib/googleErrors';
 import { autocompletePlaces, getPlaceLocation } from '../lib/places';
 import { COLORS } from '../lib/theme';
 
@@ -18,34 +19,53 @@ export default function SearchBar({ onSelectLocation }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState('');
   const debounceRef = useRef(null);
 
   // Debounced autocomplete lookup.
   useEffect(() => {
     clearTimeout(debounceRef.current);
+    setError('');
     if (query.trim().length < 3) {
       setResults([]);
       return;
     }
+    let active = true;
+    const currentQuery = query;
     debounceRef.current = setTimeout(async () => {
       try {
-        setResults(await autocompletePlaces(query));
-      } catch {
+        const nextResults = await autocompletePlaces(currentQuery);
+        if (active) setResults(nextResults);
+      } catch (err) {
+        if (!active) return;
         setResults([]);
+        setError(
+          isApiKeyError(err)
+            ? 'Google rejected the API key. Open API key settings.'
+            : 'Place search failed. Try again.',
+        );
       }
     }, 300);
-    return () => clearTimeout(debounceRef.current);
+    return () => {
+      active = false;
+      clearTimeout(debounceRef.current);
+    };
   }, [query]);
 
   const handleSelect = async (item) => {
     setOpen(false);
+    setError('');
     setQuery(item.primaryText);
     Keyboard.dismiss();
     try {
       const location = await getPlaceLocation(item.placeId);
       onSelectLocation(location);
-    } catch {
-      // Ignore — user can search again.
+    } catch (err) {
+      setError(
+        isApiKeyError(err)
+          ? 'Google rejected the API key. Open API key settings.'
+          : 'Could not load that place.',
+      );
     }
   };
 
@@ -65,6 +85,11 @@ export default function SearchBar({ onSelectLocation }) {
         autoCapitalize="none"
         keyboardAppearance="dark"
       />
+      {!!error && (
+        <View style={styles.errorBox}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      )}
       {open && results.length > 0 && (
         <View style={styles.results}>
           {results.map((item) => (
@@ -112,6 +137,16 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 6,
   },
+  errorBox: {
+    marginTop: 6,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.accent,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  errorText: { fontSize: 12, color: COLORS.accent },
   results: {
     backgroundColor: COLORS.surface,
     borderWidth: 1,

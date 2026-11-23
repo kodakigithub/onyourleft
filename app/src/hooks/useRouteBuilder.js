@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { getWalkingPath } from '../lib/directions';
 import { routeLengthMeters } from '../lib/distance';
+import { isApiKeyError } from '../lib/googleErrors';
 
 /**
  * Core route-editing state — same model as web/src/hooks/useRouteBuilder.js.
@@ -32,8 +33,12 @@ export function useRouteBuilder() {
     if (segmentMode === 'snap') {
       try {
         return await getWalkingPath(from, to);
-      } catch {
-        setWarning('A point could not be snapped to roads — a straight line was used instead.');
+      } catch (error) {
+        setWarning(
+          isApiKeyError(error)
+            ? 'Google rejected the API key. Open API key settings and check Routes API access and billing.'
+            : 'A point could not be snapped to roads — a straight line was used instead.',
+        );
         return [from, to];
       }
     }

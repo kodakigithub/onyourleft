@@ -1,4 +1,4 @@
-import { GOOGLE_MAPS_API_KEY, assertApiKey } from './config';
+import { requireApiKey } from './apiKey';
 import { decodePolyline } from './polyline';
 
 const ROUTES_URL = 'https://routes.googleapis.com/directions/v2:computeRoutes';
@@ -26,13 +26,13 @@ function dedupeConsecutive(points) {
  * Throws if no route is found.
  */
 export async function getWalkingPath(from, to) {
-  assertApiKey();
+  const apiKey = await requireApiKey();
 
   const response = await fetch(ROUTES_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
+      'X-Goog-Api-Key': apiKey,
       'X-Goog-FieldMask': FIELD_MASK,
     },
     body: JSON.stringify({

@@ -8,11 +8,17 @@ import {
   View,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import ApiKeySheet from './src/components/ApiKeySheet';
 import RouteMap from './src/components/RouteMap';
 import RouteControls from './src/components/RouteControls';
 import SearchBar from './src/components/SearchBar';
 import SavedRoutesSheet from './src/components/SavedRoutesSheet';
 import { useRouteBuilder } from './src/hooks/useRouteBuilder';
+import {
+  clearStoredApiKey,
+  getApiKeyInfo,
+  saveApiKey,
+} from './src/lib/apiKey';
 import { routeStorage } from './src/lib/routeStorage';
 import { COLORS } from './src/lib/theme';
 
@@ -22,9 +28,23 @@ export default function App() {
   const [savedRoutes, setSavedRoutes] = useState([]);
   const [sheetVisible, setSheetVisible] = useState(false);
   const [mapType, setMapType] = useState('standard');
+  const [apiKeyInfo, setApiKeyInfo] = useState({ source: 'loading', hasKey: null });
+  const [apiKeyVisible, setApiKeyVisible] = useState(false);
 
   useEffect(() => {
     routeStorage.list().then(setSavedRoutes);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    getApiKeyInfo().then((info) => {
+      if (!active) return;
+      setApiKeyInfo(info);
+      if (!info.hasKey) setApiKeyVisible(true);
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   const recenterOn = ({ lat, lng }) => {
@@ -60,6 +80,18 @@ export default function App() {
     setSavedRoutes(await routeStorage.list());
   };
 
+  const handleSaveApiKey = async (value) => {
+    await saveApiKey(value);
+    setApiKeyInfo(await getApiKeyInfo());
+    setApiKeyVisible(false);
+  };
+
+  const handleClearApiKey = async () => {
+    await clearStoredApiKey();
+    setApiKeyInfo(await getApiKeyInfo());
+    setApiKeyVisible(false);
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
@@ -76,6 +108,9 @@ export default function App() {
       <View style={styles.topRightControls}>
         <TouchableOpacity style={styles.routesButton} onPress={() => setSheetVisible(true)}>
           <Text style={styles.routesButtonText}>Routes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.apiKeyButton} onPress={() => setApiKeyVisible(true)}>
+          <Text style={styles.apiKeyButtonText}>API key</Text>
         </TouchableOpacity>
         <View style={styles.layerToggle}>
           <TouchableOpacity
@@ -101,7 +136,11 @@ export default function App() {
         </View>
       </View>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <RouteControls builder={builder} />
+        <RouteControls
+          builder={builder}
+          apiKeyMissing={apiKeyInfo.hasKey === false}
+          onOpenApiKey={() => setApiKeyVisible(true)}
+        />
       </KeyboardAvoidingView>
       <SavedRoutesSheet
         visible={sheetVisible}
@@ -111,6 +150,13 @@ export default function App() {
         onSaveRoute={handleSaveRoute}
         onLoadRoute={handleLoadRoute}
         onDeleteRoute={handleDeleteRoute}
+      />
+      <ApiKeySheet
+        visible={apiKeyVisible}
+        source={apiKeyInfo.source}
+        onClose={() => setApiKeyVisible(false)}
+        onSave={handleSaveApiKey}
+        onClear={handleClearApiKey}
       />
     </View>
   );
@@ -140,6 +186,20 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   routesButtonText: { fontSize: 14, fontWeight: '600', color: COLORS.primary },
+  apiKeyButton: {
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.line,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 6,
+  },
+  apiKeyButtonText: { fontSize: 12, fontWeight: '500', color: COLORS.muted },
   layerToggle: {
     flexDirection: 'row',
     overflow: 'hidden',
