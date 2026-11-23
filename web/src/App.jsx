@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import ApiKeyDialog from './components/ApiKeyDialog';
 import MapView from './components/MapView';
 import Sidebar from './components/Sidebar';
 import { useRouteBuilder } from './hooks/useRouteBuilder';
+import { clearStoredApiKey, getApiKey, saveApiKey } from './lib/apiKey';
 import { routeStorage } from './lib/routeStorage';
 
 export default function App() {
@@ -9,6 +11,22 @@ export default function App() {
   const [map, setMap] = useState(null);
   const [savedRoutes, setSavedRoutes] = useState(() => routeStorage.list());
   const [focusRoute, setFocusRoute] = useState(null);
+  const [hasApiKey] = useState(() => Boolean(getApiKey()));
+  const [apiKeyDialogOpen, setApiKeyDialogOpen] = useState(false);
+
+  const handleSaveApiKey = (value) => {
+    saveApiKey(value);
+    window.location.reload();
+  };
+
+  const handleClearApiKey = () => {
+    clearStoredApiKey();
+    window.location.reload();
+  };
+
+  if (!hasApiKey) {
+    return <ApiKeyDialog dismissible={false} onSave={handleSaveApiKey} />;
+  }
 
   const handleSaveRoute = (name) => {
     routeStorage.save({
@@ -40,6 +58,7 @@ export default function App() {
         onSaveRoute={handleSaveRoute}
         onLoadRoute={handleLoadRoute}
         onDeleteRoute={handleDeleteRoute}
+        onOpenApiKey={() => setApiKeyDialogOpen(true)}
       />
       <main className="flex-1">
         <MapView
@@ -50,8 +69,16 @@ export default function App() {
           onMapClick={builder.addPoint}
           onMoveWaypoint={builder.moveWaypoint}
           onRemoveWaypoint={builder.removeWaypoint}
+          onOpenApiKey={() => setApiKeyDialogOpen(true)}
         />
       </main>
+      {apiKeyDialogOpen && (
+        <ApiKeyDialog
+          onClose={() => setApiKeyDialogOpen(false)}
+          onSave={handleSaveApiKey}
+          onClear={handleClearApiKey}
+        />
+      )}
     </div>
   );
 }

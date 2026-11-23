@@ -1,6 +1,5 @@
 import { Loader } from '@googlemaps/js-api-loader';
-
-const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+import { getApiKey } from './apiKey';
 
 let googlePromise = null;
 
@@ -10,11 +9,10 @@ let googlePromise = null;
  */
 export function loadGoogleMaps() {
   if (!googlePromise) {
+    const apiKey = getApiKey();
     if (!apiKey) {
       return Promise.reject(
-        new Error(
-          'Missing VITE_GOOGLE_MAPS_API_KEY. Copy .env.example to .env and add your key (see README.md).',
-        ),
+        new Error('No Google Maps API key is configured. Open API key settings and add one.'),
       );
     }
     const loader = new Loader({ apiKey, version: 'weekly' });

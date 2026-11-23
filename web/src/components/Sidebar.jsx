@@ -14,6 +14,7 @@ export default function Sidebar({
   onSaveRoute,
   onLoadRoute,
   onDeleteRoute,
+  onOpenApiKey,
 }) {
   const { mode, setMode, waypoints, distanceMeters, busy, warning, undo, clear } = builder;
   const [name, setName] = useState('');
@@ -32,9 +33,18 @@ export default function Sidebar({
 
   return (
     <aside className="flex h-full w-80 flex-col overflow-y-auto border-r border-line bg-surface">
-      <div className="border-b border-line p-4">
-        <h1 className="text-lg font-bold text-ink">On Your Left</h1>
-        <p className="text-xs text-muted">Running route planner</p>
+      <div className="flex items-start justify-between gap-3 border-b border-line p-4">
+        <div>
+          <h1 className="text-lg font-bold text-ink">On Your Left</h1>
+          <p className="text-xs text-muted">Running route planner</p>
+        </div>
+        <button
+          type="button"
+          onClick={onOpenApiKey}
+          className="rounded-md border border-line px-2 py-1 text-[11px] font-medium text-muted transition-colors hover:border-primary/50 hover:text-primary"
+        >
+          API key
+        </button>
       </div>
 
       <div className="space-y-4 p-4">

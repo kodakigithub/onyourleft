@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { isApiKeyError } from '../lib/googleErrors';
 import { loadGoogleMaps } from '../lib/maps';
 import { NIGHT_MAP_STYLE } from '../lib/mapStyle';
 import { COLORS } from '../lib/theme';
@@ -25,6 +26,7 @@ export default function MapView({
   onMapClick,
   onMoveWaypoint,
   onRemoveWaypoint,
+  onOpenApiKey,
 }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
@@ -39,6 +41,12 @@ export default function MapView({
   // Initialize the map once.
   useEffect(() => {
     let cancelled = false;
+    const handleAuthFailure = () => {
+      if (!cancelled) {
+        setError('Google Maps rejected the API key. Check the key restrictions and enabled APIs.');
+      }
+    };
+    window.gm_authFailure = handleAuthFailure;
     loadGoogleMaps()
       .then((google) => {
         if (cancelled || mapRef.current || !containerRef.current) return;
@@ -61,6 +69,9 @@ export default function MapView({
       .catch((err) => setError(err.message));
     return () => {
       cancelled = true;
+      if (window.gm_authFailure === handleAuthFailure) {
+        delete window.gm_authFailure;
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -139,31 +150,51 @@ export default function MapView({
   return (
     <div className="relative h-full w-full bg-night">
       <div ref={containerRef} className="h-full w-full" />
-      <div className="absolute right-3 top-3 z-10 flex overflow-hidden rounded-lg border border-line bg-surface/95 shadow-lg backdrop-blur">
-        {MAP_TYPES.map(({ id, label }) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => changeMapType(id)}
-            aria-pressed={mapType === id}
-            className={`px-3 py-1.5 text-xs font-medium transition-colors ${
-              mapType === id
-                ? 'bg-primary text-night'
-                : 'text-ink hover:bg-elevated'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      {error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-night/90 p-8">
-          <p className="max-w-md text-center text-sm text-accent">{error}</p>
+      {!error && (
+        <div className="absolute right-3 top-3 z-10 flex overflow-hidden rounded-lg border border-line bg-surface/95 shadow-lg backdrop-blur">
+          {MAP_TYPES.map(({ id, label }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => changeMapType(id)}
+              aria-pressed={mapType === id}
+              className={`px-3 py-1.5 text-xs font-medium transition-colors ${
+                mapType === id
+                  ? 'bg-primary text-night'
+                  : 'text-ink hover:bg-elevated'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
       )}
-      <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-line bg-surface/90 px-4 py-1.5 text-xs text-muted shadow-lg backdrop-blur">
-        Click to add a point · Drag markers to adjust · Right-click a marker to remove it
-      </div>
+      {error && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-night p-8">
+          <div className="max-w-md text-center">
+            <p className="text-sm font-medium text-accent">{error}</p>
+            <p className="mt-2 text-xs leading-5 text-muted">
+              {isApiKeyError(error)
+                ? 'Check that your API key has the Maps JavaScript API enabled, allows this site, and has billing enabled.'
+                : 'Check your connection and reload the page to try again.'}
+            </p>
+            {isApiKeyError(error) && (
+              <button
+                type="button"
+                onClick={onOpenApiKey}
+                className="mt-4 rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-night transition-colors hover:bg-primary/90"
+              >
+                API key settings
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+      {!error && (
+        <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-line bg-surface/90 px-4 py-1.5 text-xs text-muted shadow-lg backdrop-blur">
+          Click to add a point · Drag markers to adjust · Right-click a marker to remove it
+        </div>
+      )}
     </div>
   );
 }

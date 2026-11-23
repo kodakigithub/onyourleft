@@ -21,6 +21,8 @@ separate and portable.
     point, or clear the whole route
 - **Search & save routes**
   - Places search bar to find and center on any location/address
+  - Runtime **API key** settings: use the deployment key or paste your own,
+    which is stored in this browser
   - Night Run dark map style with a **Map / Satellite** layer toggle
   - Save routes (name, waypoints, full drawn path, distance, date) to
     browser `localStorage`
@@ -30,11 +32,13 @@ separate and portable.
 
 ```bash
 npm install
-cp .env.example .env   # then paste your API key into .env
+cp .env.example .env   # optional: set a deployment key
 npm run dev
 ```
 
-Then open the URL Vite prints (usually http://localhost:5173).
+Then open the URL Vite prints (usually http://localhost:5173). If no
+deployment key is configured, the app opens a setup dialog where you can
+paste your own key.
 
 ### Getting a Google Maps API key
 
@@ -57,7 +61,23 @@ Then open the URL Vite prints (usually http://localhost:5173).
    ```
 
 Vite only exposes variables prefixed with `VITE_` to the frontend, and
-`.env` is gitignored — the key is never hardcoded or committed.
+`.env` is gitignored. A deployment key is still bundled into the frontend and
+visible to users, so restrict it to your HTTP referrers and the required
+APIs.
+
+### Using your own key at runtime
+
+The **API key** button in the sidebar opens the key dialog. If neither a
+custom key nor a deployment key is available, the dialog opens automatically
+and the map is gated until you add one.
+
+- A custom key is saved in this browser's `localStorage` and overrides
+  `VITE_GOOGLE_MAPS_API_KEY`.
+- **Remove saved key** deletes the custom key and falls back to the
+  deployment key, if one exists.
+- Saving or removing a key reloads the page, which clears any unsaved route.
+- The key is sent only to Google Maps Platform. Use the same Google Cloud
+  setup and restrictions described above.
 
 ## Scripts
 
@@ -77,6 +97,7 @@ src/
 ├── components/
 │   ├── MapView.jsx            # Google Map: markers, polylines, click/drag events
 │   ├── SearchBar.jsx          # Places autocomplete → pans the map
+│   ├── ApiKeyDialog.jsx       # Runtime API key setup/edit dialog
 │   ├── Sidebar.jsx            # Distance, mode toggle, actions, save form
 │   └── SavedRouteList.jsx     # Saved routes: load / delete
 ├── hooks/
@@ -84,6 +105,8 @@ src/
 │                              #   add/move/remove/undo/clear, snap vs free-form
 └── lib/
     ├── maps.js                # Loads the Google Maps JS API once
+    ├── apiKey.js              # Custom key storage + env-key fallback
+    ├── googleErrors.js        # Detects Google key/auth errors
     ├── mapStyle.js            # Night Run dark map palette
     ├── theme.js               # Shared Night Run colors for JS-rendered UI
     ├── directions.js          # Routes API (walking) → road-snapped path
@@ -116,6 +139,8 @@ with API calls and no component code needs to change.
   must be enabled on the Google Cloud project).
 - If a point can't be snapped (e.g. dropped in water), that segment falls
   back to a straight line and a warning is shown.
+- A missing or rejected key disables the map; runtime key errors are shown
+  with a shortcut to the **API key** settings.
 - No accounts, no backend, no GPS/pace tracking, no PWA — by design.
 
 ## Roadmap
